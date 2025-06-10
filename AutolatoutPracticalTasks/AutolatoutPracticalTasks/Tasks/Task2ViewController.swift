@@ -47,7 +47,7 @@ final class Task2ViewController: UIViewController {
         NSLayoutConstraint.activate([
             label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             label.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
-            label.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5)])
+            label.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.7)])
         //deleted height anchor constraint
         
         
