@@ -29,6 +29,10 @@ final class Task2ViewController: UIViewController {
         $0.setTitleColor(.white, for: .normal)
         $0.backgroundColor = .systemBlue
         $0.layer.cornerRadius = 10
+        $0.titleLabel?.lineBreakMode = .byTruncatingTail
+        $0.titleLabel?.adjustsFontSizeToFitWidth = true
+        $0.titleLabel?.minimumScaleFactor = 0.7
+        $0.titleLabel?.numberOfLines = 1
         $0.translatesAutoresizingMaskIntoConstraints = false
         return $0
     }(UIButton(primaryAction: buttonTapped))
@@ -42,6 +46,12 @@ final class Task2ViewController: UIViewController {
         super.viewDidLoad()
         view.addSubview(label)
         view.addSubview(button)
+
+        label.setContentHuggingPriority(.required, for: .vertical)
+        label.setContentCompressionResistancePriority(.required, for: .vertical)
+        // Content hugging and compression resistance to prefer intrinsic size but allow shrinking
+        button.setContentHuggingPriority(.required, for: .horizontal)
+        button.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         
         //positioning the label with constaints
         NSLayoutConstraint.activate([
@@ -56,7 +66,8 @@ final class Task2ViewController: UIViewController {
             button.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 30),
             button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             button.heightAnchor.constraint(equalToConstant: 30),
-            button.widthAnchor.constraint(equalToConstant: 100)
+            button.leadingAnchor.constraint(greaterThanOrEqualTo: view.layoutMarginsGuide.leadingAnchor),
+            button.trailingAnchor.constraint(lessThanOrEqualTo: view.layoutMarginsGuide.trailingAnchor)
             
         ])
     }
