@@ -17,6 +17,7 @@ final class Task2ViewController: UIViewController {
         $0.font = .systemFont(ofSize: 30)
         $0.textColor = .white
         $0.backgroundColor = .systemGray2
+        $0.numberOfLines = 0         //added this for label not to clip
         $0.textAlignment = .center
         $0.translatesAutoresizingMaskIntoConstraints = false
         return $0
@@ -46,8 +47,8 @@ final class Task2ViewController: UIViewController {
         NSLayoutConstraint.activate([
             label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             label.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 50),
-            label.heightAnchor.constraint(equalToConstant: 50),
             label.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: 0.5)])
+        //deleted height anchor constraint
         
         
         //positioning the button with constraints
