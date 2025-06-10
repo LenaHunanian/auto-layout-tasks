@@ -11,12 +11,14 @@ import UIKit
 // If the orientation changes to Compact-Compact, same 2 subviews should be aligned horizontally.
 // Hou can use iPhone 16 simulator for testing.
 final class Task4ViewController: UIViewController {
-    //red and blue views, and stackview
+ //two separate views
     private let redView = UIView()
     private let blueView = UIView()
-    private let stackView = UIStackView()
-    
-    
+
+    // holding constraints separately so we can activate/deactivate on layout updates
+    private var verticalConstraints: [NSLayoutConstraint] = []
+    private var horizontalConstraints: [NSLayoutConstraint] = []
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
@@ -24,63 +26,71 @@ final class Task4ViewController: UIViewController {
         updateLayout(for: traitCollection)
         registerForTraitChanges()
     }
-    
-    
-    //MARK: setting up views
+
     private func setupViews() {
         view.backgroundColor = .white
         redView.backgroundColor = .red
         blueView.backgroundColor = .blue
-        stackView.addArrangedSubview(redView)
-        stackView.addArrangedSubview(blueView)
-        
-        stackView.distribution = .fillEqually
-        stackView.spacing = 15
-        
-        
-        
-        view.addSubview(stackView)
+
+        view.addSubview(redView)
+        view.addSubview(blueView)
+
         redView.translatesAutoresizingMaskIntoConstraints = false
         blueView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        
     }
-    
-    
-    //MARK: constraints for stackView
-    
+
     private func setupConstraints() {
-        NSLayoutConstraint.activate([
-            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            stackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            stackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
-            stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
-        ])
+        // Common constraints for all sides with padding
+        let commonRedTop = redView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20)
+        let commonLeading = redView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20)
+        let commonTrailing = blueView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20)
+        let commonBottom = blueView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
+
+        // Vertical constraints (Compact Width, Regular Height)
+        verticalConstraints = [
+            commonRedTop,
+            commonLeading,
+            commonTrailing,
+            blueView.topAnchor.constraint(equalTo: redView.bottomAnchor, constant: 15),
+            blueView.leadingAnchor.constraint(equalTo: redView.leadingAnchor),
+            blueView.trailingAnchor.constraint(equalTo: redView.trailingAnchor),
+            commonBottom,
+            redView.heightAnchor.constraint(equalTo: blueView.heightAnchor)
+        ]
+
+        // Horizontal constraints (Compact Width, Compact Height)
+        horizontalConstraints = [
+            redView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            blueView.topAnchor.constraint(equalTo: redView.topAnchor),
+            redView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            blueView.leadingAnchor.constraint(equalTo: redView.trailingAnchor, constant: 15),
+            blueView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            redView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20),
+            blueView.bottomAnchor.constraint(equalTo: redView.bottomAnchor),
+            redView.widthAnchor.constraint(equalTo: blueView.widthAnchor)
+        ]
     }
-    
-    //MARK: updating the layout following the screen rotating position
+
     private func updateLayout(for traits: UITraitCollection) {
+        // Remove all constraints first
+        NSLayoutConstraint.deactivate(verticalConstraints + horizontalConstraints)
+
         if traits.horizontalSizeClass == .compact {
             if traits.verticalSizeClass == .regular {
-                stackView.axis = .vertical
-            }else if traits.verticalSizeClass == .compact {
-                stackView.axis = .horizontal
-            }else {
-                stackView.axis = .vertical
+                NSLayoutConstraint.activate(verticalConstraints)
+            } else if traits.verticalSizeClass == .compact {
+                NSLayoutConstraint.activate(horizontalConstraints)
+            } else {
+                NSLayoutConstraint.activate(verticalConstraints)
             }
+        } else {
+            NSLayoutConstraint.activate(verticalConstraints) // fallback
         }
     }
-    
-    
-    
-    
+
     private func registerForTraitChanges() {
         let sizeTraits: [UITrait] = [UITraitVerticalSizeClass.self, UITraitHorizontalSizeClass.self]
-        registerForTraitChanges(sizeTraits) { (self: Self, previousTraitCollection: UITraitCollection) in
-            // TODO: -  Handle the trait change.
-            print("Trait collection changed:", self.traitCollection)
-            
-            //added this method to handle the trait change
+        registerForTraitChanges(sizeTraits) { (self: Self, _) in
             self.updateLayout(for: self.traitCollection)
         }
     }
