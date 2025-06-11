@@ -29,6 +29,7 @@ final class Task2ViewController: UIViewController {
         $0.setTitleColor(.white, for: .normal)
         $0.backgroundColor = .systemBlue
         $0.layer.cornerRadius = 10
+        $0.titleLabel?.font = .boldSystemFont(ofSize: 100)        //added this to show that now it works fine
         $0.titleLabel?.lineBreakMode = .byTruncatingTail
         $0.titleLabel?.adjustsFontSizeToFitWidth = true
         $0.titleLabel?.minimumScaleFactor = 0.7
@@ -65,7 +66,7 @@ final class Task2ViewController: UIViewController {
         NSLayoutConstraint.activate([
             button.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 30),
             button.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            button.heightAnchor.constraint(equalToConstant: 30),
+            //deleted height anchor for button to not clip vertically
             button.leadingAnchor.constraint(greaterThanOrEqualTo: view.layoutMarginsGuide.leadingAnchor),
             button.trailingAnchor.constraint(lessThanOrEqualTo: view.layoutMarginsGuide.trailingAnchor)
             
